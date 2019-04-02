@@ -28,7 +28,7 @@ class NfeFactory(object):
         :param company: objeto res.company
         :return: Objeto Nfe
         """
-        if nfe_version == '3.10':
+        if nfe_version == '4.00':
             from openerp.addons.l10n_br_account_product.sped.nfe.document \
                 import NFe310
             nfe_obj = NFe310()

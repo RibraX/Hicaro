@@ -148,7 +148,7 @@ def print_danfe(invoices):
         elif inv.nfe_version == '2.00':
             from pysped.nfe.leiaute import ProcNFe_200
             procnfe = ProcNFe_200()
-        elif inv.nfe_version == '3.10':
+        elif inv.nfe_version == '4.00':
             from pysped.nfe.leiaute import ProcNFe_310
             procnfe = ProcNFe_310()
 
