@@ -7,6 +7,7 @@ import time
 import base64
 from openerp import models, fields, api, _
 from openerp.exceptions import Warning as UserError
+from openerp.addons.l10n_br_base.tools.misc import punctuation_rm
 
 
 class L10nBrAccountNfeExportInvoice(models.TransientModel):
@@ -37,30 +38,19 @@ class L10nBrAccountNfeExportInvoice(models.TransientModel):
     name = fields.Char('Nome', size=255)
     file = fields.Binary('Arquivo', readonly=True)
     file_type = fields.Selection(
-        selection=[
-            (u'xml', 'XML'),
-            (u'txt', ' TXT')
-        ],
+        selection=[(u'xml', 'XML'), (u'txt', ' TXT')],
         string='Tipo do Arquivo',
         default=_default_file_type)
     state = fields.Selection(
-        selection=[
-            ('init', 'init'),
-            ('done', 'done')
-        ],
+        selection=[('init', 'init'), ('done', 'done')],
         string='state',
         readonly=True,
         default='init')
     nfe_environment = fields.Selection(
-        selection=[
-            ('1', u'Produção'),
-            ('2', u'Homologação')
-        ],
+        selection=[('1', u'Produção'), ('2', u'Homologação')],
         string='Ambiente',
         default=_default_nfe_environment)
-    sign_xml = fields.Boolean(
-        string='Assinar XML',
-        default=_default_sign_xml)
+    sign_xml = fields.Boolean(string='Assinar XML', default=_default_sign_xml)
     nfe_export_result = fields.One2many(
         comodel_name='l10n_br_account_product.nfe_export_invoice_result',
         inverse_name='wizard_id',
@@ -114,20 +104,19 @@ class L10nBrAccountNfeExportInvoice(models.TransientModel):
 
             if export_inv_ids:
                 if len(export_inv_numbers) > 1:
-                    name = 'nfes%s-%s.%s' % (
-                        time.strftime('%d-%m-%Y'),
-                        self.env['ir.sequence'].get('nfe.export'),
-                        data.file_type)
+                    name = 'nfes%s-%s.%s' % (time.strftime(
+                        '%d-%m-%Y'), self.env['ir.sequence'].get('nfe.export'),
+                                             data.file_type)
                 else:
-                    name = '%s%s-nfe.%s' % (
-                        time.strftime('%d-%m-%Y'),
-                        export_inv_numbers[0],
-                        data.file_type)
+                    name = '%s_%s_%s_%s-nfe.%s' % (
+                        export_inv_numbers[0], time.strftime('%d-%m-%Y'),
+                        punctuation_rm(company_ids.cnpj_cpf),
+                        company_ids.document_serie_id.code, data.file_type)
 
                 mod_serializer = __import__(
                     ('openerp.addons.l10n_br_account_product'
-                     '.sped.nfe.serializer.') +
-                    data.file_type, globals(), locals(), data.file_type)
+                     '.sped.nfe.serializer.') + data.file_type, globals(),
+                    locals(), data.file_type)
 
                 func = getattr(mod_serializer, 'nfe_export')
 
@@ -172,12 +161,9 @@ class L10nBrAccountNfeExportInvoiceResult(models.TransientModel):
     wizard_id = fields.Many2one(
         comodel_name='l10n_br_account_product.nfe_export_invoice',
         string='Wizard ID',
-        ondelete='cascade', select=True)
+        ondelete='cascade',
+        select=True)
     document = fields.Char(string='Documento', size=255)
     status = fields.Selection(
-        selection=[
-            ('success', 'Sucesso'),
-            ('error', 'Erro')
-        ],
-        string='Status')
+        selection=[('success', 'Sucesso'), ('error', 'Erro')], string='Status')
     message = fields.Char(string='Mensagem', size=255)
