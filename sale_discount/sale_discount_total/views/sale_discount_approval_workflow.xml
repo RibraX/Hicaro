@@ -14,7 +14,7 @@
                 </field>
                 <field name="state" position="before">
                     <!-- buttonz -->
-                    <button string="Approve Order" type="workflow" name="order_confirm" states="waitingapproval" class="oe_highlight" groups="base.group_sale_manager"/>
+                    <button string="Autorizar" type="workflow" name="order_confirm" states="waitingapproval" class="oe_highlight" groups="base.group_sale_manager"/>
                 </field>
                 <xpath expr="//button[@name='action_cancel']" position="attributes">
                      <attribute name ="states">waitingapproval,manual,progress</attribute>
@@ -28,7 +28,7 @@
         <!--activity-->
         <record id="act_approve" model="workflow.activity">
             <field name="wkf_id" ref="sale.wkf_sale"/>
-            <field name="name">Waiting Approval</field>
+            <field name="name">Aprovação</field>
             <field name="kind">function</field>
             <field name="action">wait_approval()</field>
         </record>
